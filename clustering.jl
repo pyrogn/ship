@@ -82,7 +82,8 @@ end
 Собирается из качества индивидуальных лучших кластеров.
 """
 function score_clustering(coords, clusters, num_targets)
-    best_clusters = sort_clusters(coords, clusters)[begin:num_targets]
+    min_idx = min(num_targets, length(clusters))
+    best_clusters = sort_clusters(coords, clusters)[begin:min_idx]
     scores_matrix = reduce(vcat, transpose.(map(x -> collect(score_cluster(coords, x)), best_clusters)))
     Tuple(sum(scores_matrix, dims=1))
 end
@@ -137,7 +138,9 @@ end
 
 """Получение лучших кластеров с указанными ограничениями"""
 function get_clusters_with_constraints(coords; radius_damage=RADIUS_DAMAGE, num_targets=NUM_TARGETS)
-    find_clusters(coords, radius_damage, num_targets=num_targets)[begin:num_targets]
+    clusters = find_clusters(coords, radius_damage, num_targets=num_targets)
+    min_idx = min(num_targets, length(clusters))
+    clusters[begin:min_idx]
 end
 
 """Получить все точки, попавшие в лучшие кластера"""
